@@ -1,51 +1,49 @@
- library ieee;
+library ieee;
 use ieee.std_logic_1164.all;
+use  ieee.numeric_std.all;
 
 entity decoder is
-    port(   clk         : in  std_logic;
-            instruction : in  std_logic_vector(0 to 31));
-            opcode      : out std_logic_vector(0 to 5);
-            registerX   : out std_logic_vector(0 to 3);
-            registerY   : out std_logic_vector(0 to 3);
-            registerZ   : out std_logic_vector(0 to 3);
-            immediate   : out std_logic_vector(0 to 25) );
+    port(   instruction : in  std_logic_vector(31 downto 0);
+            opcode      : out std_logic_vector(5 downto 0);
+            registerX   : out std_logic_vector(3 downto 0);
+            registerY   : out std_logic_vector(3 downto 0);
+            registerZ   : out std_logic_vector(3 downto 0);
+            immediate   : out std_logic_vector(25 downto 0) );
     
 end entity decoder;
 
 architecture verhalten of decoder is
 
 begin
-    
-
-    opcode <= instruction(0 to 5);
-    immediate(0 to 25) <= '00000000000000000000000000';
-    case instruction(0) is 
-        when '0' => 
-            registerX(0 to 3) <= instruction(6 to 9);
-            registerY(0 to 3) <= instruction(10 to 13);
-            registerZ(0 to 3) <= instruction(14 to 17);
-        when '1' =>
-            case instruction(1) is
-                when '0' =>
-                    registerZ(0 to 3) <= instruction(6 to 9);
-                    immediate(4 to 25) <= instruction(10 to 31);
-                when '1' =>
-                    case instruction(2) is
-                        when '0' =>
-                            registerX(0 to 3) <= instruction(6 to 9);
-                            registerZ(0 to 3) <= instruction(10 to 13);
-                            immediate(8 to 25) <= instruction(14 to 31);
-                        when '1' =>
-                            case instruction(3) is
-                                when '0' => 
-                                    immediate(0 to 25) <= instruction(6 to 31);
-                                when '1' => 
-                                    registerX(0 to 3) <= instruction(6 to 9);
-                            end case;
-                    end case;
-            end case;        
-    end case;
+    P1: process (instruction) is 
+    begin
+        opcode <= instruction(31 downto 26);
+        immediate <= (others => '0');
+        registerX <= (others => '-');
+        registerY <= (others => '-');
+        registerZ <= (others => '-');
         
-
-
+        if instruction(31) = '0' then
+                registerX <= instruction(25 downto 22);
+                registerY <= instruction(21 downto 18);
+                registerZ <= instruction(17 downto 14);
+        else
+            if instruction(30) = '0' then
+                registerZ <= instruction(25 downto 22);
+                immediate(21 downto 0) <= instruction(21 downto 0);
+            else
+                if instruction(29) = '0' then
+                        registerX <= instruction(25 downto 22);
+                        registerZ <= instruction(17 downto 14);
+                        immediate(16 downto 0) <= instruction(17 downto 0);
+                else
+                    if instruction(28) = '0' then
+                            immediate <= instruction(25 downto 0);
+                    else 
+                            registerX <= instruction(25 downto 22);
+                    end if;
+                end if;
+            end if; 
+        end if;
+    end process;
 end architecture verhalten;
