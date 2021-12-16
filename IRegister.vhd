@@ -11,8 +11,10 @@ end entity IRegister;
 
 architecture verhalten of IRegister is
 begin
-    P1 : process(clk, InstructionIn) is
+    P1 : process(clk) is
         begin
-            InstructionOut <= InstructionIn;
+            if rising_edge(clk) then
+                InstructionOut <= InstructionIn;
+            end if;
     end process;
 end architecture;

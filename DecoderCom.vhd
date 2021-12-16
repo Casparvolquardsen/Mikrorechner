@@ -7,29 +7,27 @@ end entity testbench;
 
 architecture simulation of testbench is
     component decoder is
-        port(   instruction : in  std_logic_vector(0 to 31);
-                opcode      : out std_logic_vector(0 to 5);
-                registerX   : out std_logic_vector(0 to 3);
-                registerY   : out std_logic_vector(0 to 3);
-                registerZ   : out std_logic_vector(0 to 3);
-                immediate   : out std_logic_vector(0 to 25) );
+        port(   instruction                     : in  std_logic_vector(31 downto 0);
+                opcode                          : out std_logic_vector(5 downto 0);
+                registerX,registerY,registerZ   : out std_logic_vector(3 downto 0);
+                immediate                       : out std_logic_vector(25 downto 0) );
     
     end component decoder;
 
-    signal instruction                      :  std_logic_vector(0 to 31));
-    signal opcode                           :  std_logic_vector(0 to 5);
-    signal registerX, registerY, registerZ  :  std_logic_vector(0 to 3);
-    signal immediate                        :  std_logic_vector(0 to 25);
+    signal instruction                      :  std_logic_vector(31 downto 0);
+    signal opcode                           :  std_logic_vector(5 downto 0);
+    signal registerX, registerY, registerZ  :  std_logic_vector(3 downto 0);
+    signal immediate                        :  std_logic_vector(25 downto 0);
 
     begin
-        label : decoder port map(instruction, opcode, registerX, registerY, registerZ, immediate);
+        test : decoder port map(instruction, opcode, registerX, registerY, registerZ, immediate);
 
         process is
         begin 
-            instruction <= "00000000000000000000000000";
+            instruction <= "00000000000000000000000000000000";
             wait for 10 ns;
             
-            instruction <= "00000000000000000000000000";
+            instruction <= "00000100000001001000000000000000";
             wait for 10 ns;
 
         end process;

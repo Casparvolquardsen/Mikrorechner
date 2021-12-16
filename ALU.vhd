@@ -17,8 +17,12 @@ architecture verhalten of ALU is
 begin
     P1 : process (opcode, A, B, immediate, cin) is
     variable temp : std_logic_vector(32 downto 0);
+    constant setBit : std_logic_vector(31 downto 0) := "00000000000000000000000000000001";
+    constant zero31 : std_logic_vector(30 downto 0) := "0000000000000000000000000000000";
+
     begin
         cout <= cin;
+        result <= (others => 'U');
         case opcode is
             -- mov : R[z] = R[x]
             when "000000" => 
@@ -26,20 +30,24 @@ begin
                 
             -- addu : R[z] = R[x] + R[y]
             when "000001" => 
-                temp <= std_logic_vector(unsigned('0' & A) + unsigned('0' & B));
+                temp := std_logic_vector(unsigned('0' & A) + unsigned('0' & B));
                 result <= temp(31 downto 0);
-                cout <=temp(32);
+                cout <= temp(32);
 
             -- addc : R[z] = R[x] + R[y] + c
-            when "000010" => 
-                temp <= std_logic_vector(unsigned('0' & A) + unsigned('0' & B) + unsigned(cin));
+            when "000010" =>
+                temp := std_logic_vector(unsigned('0' & A) + unsigned('0' & B) + unsigned(zero31 & cin));
                 result <= temp(31 downto 0);
                 cout <=temp(32);
 
             -- subu : R[z] = R[x] - R[y]
             when "000011" =>
                 result <= std_logic_vector(unsigned(A) - unsigned(B));
-                cout <= (unsigned(A) < unsigned(B))?1:0; 
+                if (unsigned(A) < unsigned(B)) then
+                    cout <= '1';
+                else
+                    cout <= '0';
+                end if; 
 
 
             -- and : R[z] = R[x] AND R[y]
@@ -130,47 +138,71 @@ begin
 
             -- cmpe : C = (R[x] == R[y])
             when "011000" => 
-                cout <= (unsigned(A) = unsigned(B));
+                if unsigned(A) = unsigned(B) then
+                    cout <= '1';
+                else
+                    cout <= '0';
+                end if ;
             
             -- cmpne : C = (R[x] != R[y])
-            when "011001" => 
-                cout <= (unsigned(A) /= unsigned(B));
+            when "011001" =>
+                if unsigned(A) /= unsigned(B) then
+                    cout <= '1';
+                else
+                    cout <= '0';
+                end if ;
 
             -- cmpgt : C = (R[x] > R[y])
             when "011010" => 
-                cout <= (unsigned(A) > unsigned(B));
+                if unsigned(A) > unsigned(B) then
+                    cout <= '1';
+                else
+                    cout <= '0';
+                end if ;
 
             -- cmplt : C = (R[x] < R[y])
             when "011011" => 
-                cout <= (unsigned(A) < unsigned(B));
+                if unsigned(A) < unsigned(B) then
+                    cout <= '1';
+                else
+                    cout <= '0';
+                end if ;
 
             -- cmpgte : C = (R[x] >= R[y])
             when "011100" => 
-                cout <= (unsigned(A) => unsigned(B));
+                if unsigned(A) >= unsigned(B) then
+                    cout <= '1';
+                else
+                    cout <= '0';
+                end if ;
 
             -- cmplte : C = (R[x] <= R[y])
             when "011101" => 
-                cout <= (unsigned(A) <= unsigned(B));
+                if unsigned(A) <= unsigned(B) then
+                    cout <= '1';
+                else
+                    cout <= '0';
+                end if ;
             
             -- movi : R[z] = c
             when "100000" =>  
-                result <= immediate;
+                result(25 downto 0) <= immediate;
 
             -- addi : R[z] = R[z] + c
             when "100001" =>  
-                temp <= std_logic_vector(unsigned('0' & A) + unsigned(immediate));
+                temp := std_logic_vector(unsigned('0' & A) + unsigned(immediate));
                 result <= temp(31 downto 0);
-                cout <=temp(32)
+                cout <=temp(32);
 
             -- subi : R[z] = R[z] - c
-            when "100010" => 
-                temp <= std_logic_vector(unsigned('0' & A) - unsigned(immediate));
+            when "100010" =>
+                temp := std_logic_vector(unsigned('0' & A) - unsigned(immediate));
                 result <= temp(31 downto 0);
                 cout <=temp(32);
 
             -- andi : R[z] = R[z] AND c
             when "100011" =>    
-                result <= A AND ("000000" + immediate);
+                result <= A AND ("000000" & immediate);
 
             -- lsli : R[z] = R[z] << c
             when "100100" =>    
@@ -182,11 +214,11 @@ begin
 
             -- bseti : R[z] = R[z]  |  (1 << c) (set bit)
             when "100111" =>    
-                result <= A OR std_logic_vector(shift_left(unsinged("00000000000000000000000000000001"), to_integer(unsigned(immediate)));
+                result <= A OR std_logic_Vector(shift_left(unsigned(setBit), to_integer(unsigned(immediate))));
             
             -- bclri : R[z] = R[z]  & !(1 << c) (clear bit)
             when "101000" =>    
-                result <= A AND std_logic_vector(shift_left(unsinged("00000000000000000000000000000001"), to_integer(unsigned(immediate)));
+                result <= A AND std_logic_Vector(shift_left(unsigned(setBit), to_integer(unsigned(immediate))));
 
             -- default
             when others => null;

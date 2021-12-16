@@ -19,9 +19,9 @@ begin
     begin
         opcode <= instruction(31 downto 26);
         immediate <= (others => '0');
-        registerX <= (others => '-');
-        registerY <= (others => '-');
-        registerZ <= (others => '-');
+        registerX <= (others => 'U');
+        registerY <= (others => 'U');
+        registerZ <= (others => 'U');
         
         if instruction(31) = '0' then
                 registerX <= instruction(25 downto 22);
@@ -29,13 +29,18 @@ begin
                 registerZ <= instruction(17 downto 14);
         else
             if instruction(30) = '0' then
+                registerX <= instruction(25 downto 22);
                 registerZ <= instruction(25 downto 22);
                 immediate(21 downto 0) <= instruction(21 downto 0);
             else
                 if instruction(29) = '0' then
                         registerX <= instruction(25 downto 22);
-                        registerZ <= instruction(17 downto 14);
-                        immediate(16 downto 0) <= instruction(17 downto 0);
+                        if instruction(26) = '0' then
+                            registerZ <= instruction(17 downto 14);
+                        else
+                            registerY <= instruction(17 downto 14);
+                        end if;
+                        immediate(17 downto 0) <= instruction(17 downto 0);
                 else
                     if instruction(28) = '0' then
                             immediate <= instruction(25 downto 0);

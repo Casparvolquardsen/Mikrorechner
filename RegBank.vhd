@@ -4,16 +4,34 @@ use ieee.numeric_std.all;
 
 entity RegBank is
     port(   clk : in std_logic;
+            x,y,z: in std_logic_vector(3 downto 0);
+            C,PCIn : in std_logic_vector(31 downto 0);
+
+            A,B : out std_logic_vector(31 downto 0));
              
 end entity RegBank;
 
 architecture verhalten of RegBank is
-begin
-    type Reg_Array is array(0 to 15) of std_logic_vector(31 downto 0);
-    variable registers : Reg_Array := (others => (others => U));
-
-    P1 : process(clk, InstructionIn) is
-        begin
-            InstructionOut <= InstructionIn;
-    end process;
+    type R is array(0 to 15) of std_logic_vector(31 downto 0);
+    signal registers : R;
+    begin
+        P1 : process(clk) is
+            begin
+                If rising_edge(clk) then
+                    A <= (others => 'U');
+                    B <= (others => 'U');
+                    if PCIn /= "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" then
+                        registers(15) <= PCIn;
+                    end if;
+                    if x /= "UUUU" then
+                        A <= registers(to_integer(unsigned(x)));
+                    end if;
+                    if y /= "UUUU" then
+                        B <= registers(to_integer(unsigned(y)));
+                    end if;
+                    if z /= "UUUU" then
+                        registers(to_integer(unsigned(z))) <= C; -- TODO: Was passiert wenn z undefined?
+                    end if;
+                end if;
+        end process;
 end architecture;
