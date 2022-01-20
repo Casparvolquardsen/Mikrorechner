@@ -14,7 +14,7 @@ begin
     P1 : process(clk) is
         begin
             if rising_edge(clk) then
-                Immin <= Immout;
+                Immout <= Immin;
             end if;
     end process;
 end architecture;

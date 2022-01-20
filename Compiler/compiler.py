@@ -136,10 +136,11 @@ if __name__ == "__main__":
     ]
         
     f = open(saving_path, "w")
-    f.write("")
+    f.write("DEPTH = 65536;				-- # words\nWIDTH = 32;				    -- # bits/word\nADDRESS_RADIX = DEC;		-- address format\nDATA_RADIX = BIN;			-- data format\nCONTENT\nBEGIN\n")
     f.close()
     
     file = open(path, "r")
+    byte_number = 0
     for line_number, line in enumerate(file):
         command_list = line.strip().split()
         if len(command_list) == 0:
@@ -190,7 +191,7 @@ if __name__ == "__main__":
 
             register_x = get_binary(command_list[1], 4, line_number)
             register__ = get_binary(command_list[2], 4, line_number)
-            immediate = get_binary(command_list[3], 18, line_number)
+            immediate = get_binary(command_list[3], 18, line_number) # TODO: kann raus, wird nicht mehr benötigt.
 
             command_string = f"{opcodes[opcode]}{register_x}{register__}{immediate}"
             
@@ -219,9 +220,12 @@ if __name__ == "__main__":
             
 
         f = open(saving_path, "a")
-        f.write(command_string + "\n")
+        f.write(f"{byte_number} : {command_string};\n")
         f.close()
+        byte_number += 4
 
-
+    f = open(saving_path, "a")
+    f.write("END;\n")
+    f.close()
 
     file.close()

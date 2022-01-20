@@ -14,7 +14,7 @@ begin
     P1 : process(clk) is
         begin
             if rising_edge(clk) then
-                Zin <= Zout;
+                Zout <= Zin;
             end if;
     end process;
 end architecture;

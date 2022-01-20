@@ -7,7 +7,8 @@ entity RegBank is
             x,y,z: in std_logic_vector(3 downto 0);
             C,PCIn : in std_logic_vector(31 downto 0);
 
-            A,B : out std_logic_vector(31 downto 0));
+            A,B : out std_logic_vector(31 downto 0);
+            AShort : out std_logic_vector(15 downto 0));
              
 end entity RegBank;
 
@@ -25,6 +26,7 @@ architecture verhalten of RegBank is
                     end if;
                     if x /= "UUUU" then
                         A <= registers(to_integer(unsigned(x)));
+                        AShort <= registers(to_integer(unsigned(x)))(15 downto 0);
                     end if;
                     if y /= "UUUU" then
                         B <= registers(to_integer(unsigned(y)));

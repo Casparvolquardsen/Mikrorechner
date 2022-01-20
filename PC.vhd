@@ -9,13 +9,15 @@ entity PC is
             immediate   : in std_logic_vector(25 downto 0);
             cin         : in std_logic;
 
-            PCOut,PCSave : out std_logic_vector(31 downto 0));
+            PCOut,PCSave : out std_logic_vector(31 downto 0);
+            PCShort : out std_logic_vector(15 downto 0));
 end entity PC;
 
 architecture verhalten of PC is
 begin
     P1 : process(clk) is
     variable oneAdress : integer := 1;
+    variable temp : std_logic_vector(31 downto 0);
     begin
         If rising_edge(clk) then
             PCOut <= (others => 'U');
@@ -23,37 +25,39 @@ begin
             case opcode is
                 -- br : PC = PC +1+{imm26}
                 when "111000" =>    
-                    PCOut <= std_logic_vector(unsigned(PCIn) + oneAdress + unsigned(immediate));
+                    temp := std_logic_vector(unsigned(PCIn) - (2* oneAdress) + unsigned(immediate));
 
                 -- jsr : R[15] = PC+1; PC = PC+1+{imm26} (call)
                 when "111001" =>    
-                    PCOut   <= std_logic_vector(unsigned(PCIn) + oneAdress + unsigned(immediate));
+                    temp   := std_logic_vector(unsigned(PCIn) - (2* oneAdress) + unsigned(immediate));
                     PCSave  <= std_logic_vector(unsigned(PCIn) + oneAdress);
 
                 -- bt : (c=1) ? PC = PC+1+{imm26} : PC=PC+1
                 when "111010" => 
                     if cin = '1' then
-                        PCOut   <= std_logic_vector(unsigned(PCIn) + oneAdress + unsigned(immediate));
+                        temp   := std_logic_vector(unsigned(PCIn) - (2* oneAdress) + unsigned(immediate));
                     else
-                        PCOut   <= std_logic_vector(unsigned(PCIn) + oneAdress);
+                        temp   := std_logic_vector(unsigned(PCIn) + oneAdress);
                     end if;
 
                 -- bf : (c=0) ? PC = PC+2+{imm26} : PC=PC+2
                 when "111011" => 
                     if cin = '0' then
-                        PCOut   <= std_logic_vector(unsigned(PCIn) + oneAdress + unsigned(immediate));
+                        temp   := std_logic_vector(unsigned(PCIn) - (2* oneAdress) + unsigned(immediate));
                     else
-                        PCOut   <= std_logic_vector(unsigned(PCIn) + oneAdress);
+                        temp   := std_logic_vector(unsigned(PCIn) + oneAdress);
                     end if;
 
                 --jmp : PC = R[x]
                 when "111100" =>    
-                    PCOut <= X;
+                    temp := X;
 
                 -- default
                 when others => 
-                    PCOut <= std_logic_vector(unsigned(PCIn) + oneAdress);
+                    temp := std_logic_vector(unsigned(PCIn) + oneAdress);
             end case;
+            PCOut <= temp;
+            PCShort <= temp(15 downto 0);
         end if;
     end process;
 end architecture;

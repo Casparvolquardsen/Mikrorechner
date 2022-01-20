@@ -4,4 +4,4 @@ Implementierung eines RISC Prozessors mit VHDL im Rahmen des Projekt-Moduls
 
 TODO
 -PC jmp handling
--Ram Alu mux Takt anordnung
+-reset
