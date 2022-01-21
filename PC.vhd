@@ -56,6 +56,10 @@ begin
                 when others => 
                     temp := std_logic_vector(unsigned(PCIn) + oneAdress);
             end case;
+
+            if PCIn = "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" then
+                temp := "00000000000000000000000000000000";
+            end if;
             PCOut <= temp;
             PCShort <= temp(15 downto 0);
         end if;

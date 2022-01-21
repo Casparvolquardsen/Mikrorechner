@@ -27,7 +27,7 @@ architecture simulation of testbench is
             instruction <= "00000000000000000000000000000000";
             wait for 10 ns;
             
-            instruction <= "00000100000001001000000000000000";
+            instruction <= "11000100000011000000000000000000";
             wait for 10 ns;
 
         end process;

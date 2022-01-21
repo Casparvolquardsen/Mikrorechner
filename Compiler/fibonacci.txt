@@ -1,0 +1,14 @@
+nop
+movi 0 0
+movi 1 1
+movi 3 800
+movi 4 7
+nop
+nop
+stw 3 0
+addu 0 1 2
+addi 3 1
+jmp 4
+mov 1 0 # TODO immer die gleiche operanden reihenfolge
+mov 2 1
+nop

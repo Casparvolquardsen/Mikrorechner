@@ -186,6 +186,7 @@ begin
             
             -- movi : R[z] = c
             when "100000" =>  
+                result <= (others => '0');
                 result(25 downto 0) <= immediate;
 
             -- addi : R[z] = R[z] + c

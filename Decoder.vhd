@@ -36,16 +36,17 @@ begin
                 if instruction(29) = '0' then
                         registerX <= instruction(25 downto 22);
                         if instruction(26) = '0' then
-                            registerZ <= instruction(17 downto 14);
+                            registerZ <= instruction(21 downto 18);
                         else
-                            registerY <= instruction(17 downto 14);
+                            registerY <= instruction(21 downto 18);
                         end if;
-                        immediate(17 downto 0) <= instruction(17 downto 0);
                 else
                     if instruction(28) = '0' then
                             immediate <= instruction(25 downto 0);
                     else 
+                        if instruction (27) = '0' then        
                             registerX <= instruction(25 downto 22);
+                        end if;
                     end if;
                 end if;
             end if; 

@@ -3,16 +3,22 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Processor is 
-    port(clock_50 : in std_logic);
+    port(
+        clock_50                    : in std_logic;
+        wordRAM, instructionRAM    : in std_logic_vector(31 downto 0);   
+        
+        data_write                    : out std_logic_vector(31 downto 0);
+        AShortRegBank, PCShort        : out std_logic_vector(15 downto 0);
+        wren_a, wren_b              : out std_logic
+    );
 end Processor;
 
 architecture verhalten of Processor is
-    signal instructionRAM,instructionIReg,PCOut,ARegBank, PCSave, BRegBank,CMux, result, wordRAM : std_logic_vector(31 downto 0);
-    signal AShortRegBank, PCShort: std_logic_vector(15 downto 0);
-    signal opcodeDecoder, opcodeReg, opcodeReg2: std_logic_vector(5 downto 0);
+    signal instructionIReg,PCOut,ARegBank, PCSave, BRegBank, CMux, result, resultReg : std_logic_vector(31 downto 0);
+    signal opcodeDecoder, opcodeReg, opcode2Reg: std_logic_vector(5 downto 0);
     signal immediateDecoder, immediateReg : std_logic_vector(25 downto 0);
-    signal carryAlu, wren_a, wren_b: std_logic;
-    signal registerXDecoder,registerYDecoder,registerZDecoder,registerZReg : std_logic_vector(3 downto 0);
+    signal carryAlu: std_logic;
+    signal registerXDecoder,registerYDecoder,registerZDecoder,registerZReg, registerZ2Reg : std_logic_vector(3 downto 0);
 
 
     component PC is
@@ -33,6 +39,13 @@ architecture verhalten of Processor is
         InstructionIn : in std_logic_vector(31 downto 0);
         InstructionOut : out std_logic_vector(31 downto 0) );
     end component IRegister;
+
+    component ResultRegister is
+        port(  
+            clk : in  std_logic;
+            result : in std_logic_vector(31 downto 0);
+            resultReg : out std_logic_vector(31 downto 0) );
+    end component ResultRegister;
 
     component decoder is
         port(   instruction                     : in  std_logic_vector(31 downto 0);
@@ -58,12 +71,12 @@ architecture verhalten of Processor is
             AShort : out std_logic_vector(15 downto 0));
     end component regbank;
 
-    component RegisterImm is
+    component RegisterImmediate is
         port(  
             clk : in  std_logic;
             Immin : in std_logic_vector(25 downto 0);
             Immout : out std_logic_vector(25 downto 0) );
-    end component RegisterImm;
+    end component RegisterImmediate;
 
     component RegisterOp is
         port(  
@@ -90,37 +103,28 @@ architecture verhalten of Processor is
             C   : out std_logic_vector(31 downto 0) );
     end component MUX;
 
-    component RAM is
-        port (
-            address_a	: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
-            address_b	: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
-            clock		: IN STD_LOGIC;
-            data_a		: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
-            data_b		: IN STD_LOGIC_VECTOR (31 DOWNTO 0); -- don't care, read only for us
-            wren_a		: IN STD_LOGIC  := '0';
-            wren_b		: IN STD_LOGIC  := '0'; -- don't care, read only for us
-            q_a		    : OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-            q_b		    : OUT STD_LOGIC_VECTOR (31 DOWNTO 0) );
-    end component RAM;
-
+    
     component wren is
         port (
             opcode  : in std_logic_vector(5 downto 0);
             wren_a    : out std_logic;
             wren_b    : out std_logic );
-        end component wren;
+    end component wren;
 
     begin
         c0: PC port map(clock_50,opcodeReg,PCOut,ARegBank,immediateReg,carryAlu,PCOut,PCSave,PCShort);
         c1: IRegister port map(clock_50, instructionRAM, instructionIReg);
         c2: decoder port map(instructionIReg,opcodeDecoder,registerXDecoder,registerYDecoder,registerZDecoder,immediateDecoder);
         c3: RegisterZ port map(clock_50, registerZDecoder, registerZReg);
-        c4: regbank port map(clock_50,RegisterXDecoder,RegisterYDecoder,registerZReg,CMux,PCSave,ARegBank,BRegBank,AShortRegBank);
-        c5: RegisterImm port map(clock_50, immediateDecoder, immediateReg);
-        c6: RegisterOp port map(clock_50, opcodeDecoder, opcodeReg);
-        c7: ALU port map(opcodeReg, ARegBank, BRegBank, immediateReg, carryAlu, carryAlu, result);
-        c8: wren port map(opcodeReg, wren_a, wren_b);
-        c9: RegisterOp port map(clock_50, opcodeReg, opcodeReg2);
-        c10: MUX port map(opcodeReg2,result,wordRAM,CMux);
-        c11: RAM port map(AShortRegBank, PCShort, clock_50, BRegBank, BRegBank, wren_a, wren_b, instructionRAM, wordRAM);
+        c4: RegisterZ port map(clock_50, registerZReg, registerZ2Reg);
+        c5: regbank port map(clock_50,RegisterXDecoder,RegisterYDecoder,registerZ2Reg,CMux,PCSave,ARegBank,BRegBank,AShortRegBank);
+        c6: RegisterImmediate port map(clock_50, immediateDecoder, immediateReg);
+        c7: RegisterOp port map(clock_50, opcodeDecoder, opcodeReg);
+        c8: ALU port map(opcodeReg, ARegBank, BRegBank, immediateReg, carryAlu, carryAlu, result);
+        c9: ResultRegister port map(clock_50, result, resultReg);
+        c10: wren port map(opcodeReg, wren_a, wren_b);
+        c11: RegisterOp port map(clock_50, opcodeReg, opcode2Reg);
+        c12: MUX port map(opcode2Reg,resultReg,wordRAM,CMux);
+        
+        data_write <= BRegBank;
 end architecture;

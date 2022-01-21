@@ -186,14 +186,14 @@ if __name__ == "__main__":
             command_string = f"{opcodes[opcode]}{register_z}{immediate}"
         
         elif opcode in x_c_registers: 
-            if len(command_list) > 4:
+            if len(command_list) > 3:
                 raise ValueError(f"Wrong amount of operands in line number {line_number + 1}")
 
             register_x = get_binary(command_list[1], 4, line_number)
             register__ = get_binary(command_list[2], 4, line_number)
-            immediate = get_binary(command_list[3], 18, line_number) # TODO: kann raus, wird nicht mehr benötigt.
+            
 
-            command_string = f"{opcodes[opcode]}{register_x}{register__}{immediate}"
+            command_string = f"{opcodes[opcode]}{register_x}{register__}{'0'*18}"
             
         elif opcode in x_registers: 
             if len(command_list) > 2:
@@ -222,7 +222,7 @@ if __name__ == "__main__":
         f = open(saving_path, "a")
         f.write(f"{byte_number} : {command_string};\n")
         f.close()
-        byte_number += 4
+        byte_number += 1
 
     f = open(saving_path, "a")
     f.write("END;\n")
