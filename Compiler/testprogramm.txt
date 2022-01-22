@@ -7,10 +7,10 @@ nop
 addu 1 2 3
 nop 
 nop
-stw 0 3 0
+stw 0 3
 nop
 nop
-ldw 0 4 0
+ldw 0 4
 nop
 nop
 mov 4 5

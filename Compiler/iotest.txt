@@ -1,0 +1,8 @@
+nop
+movi 0 3
+nop
+mov 14 13
+jmp 0
+nop 
+nop
+nop

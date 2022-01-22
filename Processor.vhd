@@ -5,10 +5,13 @@ use ieee.numeric_std.all;
 entity Processor is 
     port(
         clock_50                    : in std_logic;
-        wordRAM, instructionRAM    : in std_logic_vector(31 downto 0);   
+        wordRAM, instructionRAM     : in std_logic_vector(31 downto 0);
+        key                         : in std_logic_vector(1 downto 0);   
+        dip                         : in std_logic_vector(3 downto 0);
         
-        data_write                    : out std_logic_vector(31 downto 0);
-        AShortRegBank, PCShort        : out std_logic_vector(15 downto 0);
+        led                         : out std_logic_vector(7 downto 0);
+        data_write                  : out std_logic_vector(31 downto 0);
+        AShortRegBank, PCShort      : out std_logic_vector(15 downto 0);
         wren_a, wren_b              : out std_logic
     );
 end Processor;
@@ -24,10 +27,11 @@ architecture verhalten of Processor is
     component PC is
         port(
             clk         : in std_logic;
-            opcode      : in  std_logic_vector(5 downto 0);
+            opcode      : in std_logic_vector(5 downto 0);
             PCIn, X     : in std_logic_vector(31 downto 0);
             immediate   : in std_logic_vector(25 downto 0);
             cin         : in std_logic;
+            key         : in std_logic_vector(1 downto 0);
     
             PCOut,PCSave : out std_logic_vector(31 downto 0);
             PCShort : out std_logic_vector(15 downto 0));
@@ -37,6 +41,7 @@ architecture verhalten of Processor is
     port(  
         clk : in  std_logic;
         InstructionIn : in std_logic_vector(31 downto 0);
+        reset       : in std_logic;
         InstructionOut : out std_logic_vector(31 downto 0) );
     end component IRegister;
 
@@ -44,6 +49,7 @@ architecture verhalten of Processor is
         port(  
             clk : in  std_logic;
             result : in std_logic_vector(31 downto 0);
+            reset       : in std_logic;
             resultReg : out std_logic_vector(31 downto 0) );
     end component ResultRegister;
 
@@ -52,13 +58,13 @@ architecture verhalten of Processor is
                 opcode                          : out std_logic_vector(5 downto 0);
                 registerX,registerY,registerZ   : out std_logic_vector(3 downto 0);
                 immediate                       : out std_logic_vector(25 downto 0) );
-    
     end component decoder;
 
     component RegisterZ is
         port(  
             clk : in  std_logic;
             Zin : in std_logic_vector(3 downto 0);
+            reset       : in std_logic;
             Zout : out std_logic_vector(3 downto 0) );
     end component RegisterZ;
 
@@ -67,6 +73,9 @@ architecture verhalten of Processor is
             clk : in std_logic;
             x,y,z: in std_logic_vector(3 downto 0);
             C,PCIn : in std_logic_vector(31 downto 0);
+            reset       : in std_logic;
+            dips  : in std_logic_vector(3 downto 0);
+            led : out std_logic_vector(7 downto 0);
             A,B : out std_logic_vector(31 downto 0);
             AShort : out std_logic_vector(15 downto 0));
     end component regbank;
@@ -75,6 +84,7 @@ architecture verhalten of Processor is
         port(  
             clk : in  std_logic;
             Immin : in std_logic_vector(25 downto 0);
+            reset       : in std_logic;
             Immout : out std_logic_vector(25 downto 0) );
     end component RegisterImmediate;
 
@@ -82,6 +92,7 @@ architecture verhalten of Processor is
         port(  
             clk : in  std_logic;
             OPin : in std_logic_vector(5 downto 0);
+            reset       : in std_logic;
             OPout : out std_logic_vector(5 downto 0) );
     end component RegisterOp;
 
@@ -112,19 +123,19 @@ architecture verhalten of Processor is
     end component wren;
 
     begin
-        c0: PC port map(clock_50,opcodeReg,PCOut,ARegBank,immediateReg,carryAlu,PCOut,PCSave,PCShort);
-        c1: IRegister port map(clock_50, instructionRAM, instructionIReg);
-        c2: decoder port map(instructionIReg,opcodeDecoder,registerXDecoder,registerYDecoder,registerZDecoder,immediateDecoder);
-        c3: RegisterZ port map(clock_50, registerZDecoder, registerZReg);
-        c4: RegisterZ port map(clock_50, registerZReg, registerZ2Reg);
-        c5: regbank port map(clock_50,RegisterXDecoder,RegisterYDecoder,registerZ2Reg,CMux,PCSave,ARegBank,BRegBank,AShortRegBank);
-        c6: RegisterImmediate port map(clock_50, immediateDecoder, immediateReg);
-        c7: RegisterOp port map(clock_50, opcodeDecoder, opcodeReg);
-        c8: ALU port map(opcodeReg, ARegBank, BRegBank, immediateReg, carryAlu, carryAlu, result);
-        c9: ResultRegister port map(clock_50, result, resultReg);
-        c10: wren port map(opcodeReg, wren_a, wren_b);
-        c11: RegisterOp port map(clock_50, opcodeReg, opcode2Reg);
-        c12: MUX port map(opcode2Reg,resultReg,wordRAM,CMux);
+        PC_component: PC port map(clock_50,opcodeReg,PCOut,ARegBank,immediateReg,carryAlu,key,PCOut,PCSave,PCShort);
+        InstructionReg_component: IRegister port map(clock_50, instructionRAM, key(0), instructionIReg);
+        Decoder_component: decoder port map(instructionIReg,opcodeDecoder,registerXDecoder,registerYDecoder,registerZDecoder,immediateDecoder);
+        ZReg1_component: RegisterZ port map(clock_50, registerZDecoder, key(0), registerZReg);
+        ZReg2_component: RegisterZ port map(clock_50, registerZReg, key(0), registerZ2Reg);
+        Regbank_component: regbank port map(clock_50,RegisterXDecoder,RegisterYDecoder,registerZ2Reg,CMux,PCSave,key(0), dip, led, ARegBank,BRegBank, AShortRegBank);
+        ImmReg_component: RegisterImmediate port map(clock_50, immediateDecoder, key(0), immediateReg);
+        OpReg_component: RegisterOp port map(clock_50, opcodeDecoder, key(0), opcodeReg);
+        ALU_component: ALU port map(opcodeReg, ARegBank, BRegBank, immediateReg, carryAlu, carryAlu, result);
+        ResultReg_component: ResultRegister port map(clock_50, result, key(0), resultReg);
+        WREN_component: wren port map(opcodeReg, wren_a, wren_b);
+        OpReg2_component: RegisterOp port map(clock_50, opcodeReg, key(0), opcode2Reg);
+        MUXRamAlu_component: MUX port map(opcode2Reg,resultReg,wordRAM,CMux);
         
         data_write <= BRegBank;
 end architecture;

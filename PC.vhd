@@ -4,10 +4,11 @@ use ieee.numeric_std.all;
 
 entity PC is
     port(   clk         : in std_logic;
-            opcode      : in  std_logic_vector(5 downto 0);
+            opcode      : in std_logic_vector(5 downto 0);
             PCIn, X     : in std_logic_vector(31 downto 0);
             immediate   : in std_logic_vector(25 downto 0);
             cin         : in std_logic;
+            key         : in std_logic_vector(1 downto 0);
 
             PCOut,PCSave : out std_logic_vector(31 downto 0);
             PCShort : out std_logic_vector(15 downto 0));
@@ -15,11 +16,12 @@ end entity PC;
 
 architecture verhalten of PC is
 begin
-    P1 : process(clk) is
+    P1 : process(clk, key) is
     variable oneAdress : integer := 1;
     variable temp : std_logic_vector(31 downto 0);
+    variable haltet : std_logic := '1';
     begin
-        If rising_edge(clk) then
+        If rising_edge(clk) and haltet = '0' then
             PCOut <= (others => 'U');
             PCSave <= (others => 'U');
             case opcode is
@@ -52,6 +54,9 @@ begin
                 when "111100" =>    
                     temp := X;
 
+                when "111110" =>
+                        haltet := '1';
+
                 -- default
                 when others => 
                     temp := std_logic_vector(unsigned(PCIn) + oneAdress);
@@ -62,6 +67,17 @@ begin
             end if;
             PCOut <= temp;
             PCShort <= temp(15 downto 0);
+        end if;
+        
+        if falling_edge(key(0)) then -- reset all registers and halt
+            PCOut <= (others => '0');
+            PCShort <= (others => '0');
+            PCSave <= (others => '0');
+            haltet := '1';
+        end if;
+
+        if falling_edge(key(1)) then -- start
+            haltet := '0';
         end if;
     end process;
 end architecture;

@@ -9,10 +9,27 @@ def get_binary(n, bit_length, line_number):
 
     return format(n, "b").zfill(bit_length)
 
+def append_command(path, word_number, binary_command, num_noops):
+    f = open(path, "a")
+    f.write(f"{word_number} : {binary_command};\n")
+    word_number += 1
+
+    for i in range(num_noops):
+        f.write(f"{word_number} : 111111{'0' * 26};\n") # write noops
+        word_number += 1
+
+    f.close()
+    return word_number
+
+def trim_comments(line):
+    command = line.split('#')[0]
+
+    return command
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Python script to compile commands to 32bit binary code.")
-    parser.add_argument("-p", "--path", required=True, help="Secify path to source code.")
-    parser.add_argument("-sp", "--saving_path", required=True, help="Secify path to save compiled code.")
+    parser.add_argument("-p", "--path", required=True, help="Specify path to source code.")
+    parser.add_argument("-sp", "--saving_path", required=True, help="Specify path to save compiled code.")
     args = parser.parse_args()
 
     path = args.path
@@ -140,9 +157,11 @@ if __name__ == "__main__":
     f.close()
     
     file = open(path, "r")
-    byte_number = 0
+    command_number = 0
     for line_number, line in enumerate(file):
-        command_list = line.strip().split()
+        without_comments = trim_comments(line)
+
+        command_list = without_comments.strip().split()
         if len(command_list) == 0:
             continue
         
@@ -218,11 +237,12 @@ if __name__ == "__main__":
         else:
             raise ValueError(f"Wrong command in line {line_number + 1}")
             
+        if opcode == "halt":
+            num_noops = 3
+        else:
+            num_noops = 0
 
-        f = open(saving_path, "a")
-        f.write(f"{byte_number} : {command_string};\n")
-        f.close()
-        byte_number += 1
+        command_number = append_command(saving_path, command_number, command_string, num_noops)
 
     f = open(saving_path, "a")
     f.write("END;\n")

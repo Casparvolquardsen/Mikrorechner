@@ -12,11 +12,12 @@ architecture simulation of testbench is
             PCIn, X     : in std_logic_vector(31 downto 0);
             immediate   : in std_logic_vector(25 downto 0);
             cin         : in std_logic;
+            reset       : in std_logic;
 
             PCOut,PCSave : out std_logic_vector(31 downto 0));
     end component PC;
 
-    signal clk          : std_logic;
+    signal clk, reset          : std_logic;
     signal opcode       : std_logic_vector(5 downto 0);
     signal PCIn, X      : std_logic_vector(31 downto 0);
     signal immediate    : std_logic_vector(25 downto 0);
@@ -27,7 +28,9 @@ architecture simulation of testbench is
         test : PC port map(clk, opcode, PCIn, X, immediate, cin, PCOut, PCSave);
 
         process is
+        
         begin    
+                reset <= '0';
                 clk <= '0';
                 wait for 5 ns;
                 -- br
