@@ -153,11 +153,11 @@ if __name__ == "__main__":
     ]
         
     f = open(saving_path, "w")
-    f.write("DEPTH = 65536;				-- # words\nWIDTH = 32;				    -- # bits/word\nADDRESS_RADIX = DEC;		-- address format\nDATA_RADIX = BIN;			-- data format\nCONTENT\nBEGIN\n")
+    f.write("DEPTH = 65536;				-- # words\nWIDTH = 32;				    -- # bits/word\nADDRESS_RADIX = DEC;		-- address format\nDATA_RADIX = BIN;			-- data format\nCONTENT\nBEGIN\n0 : 11111100000000000000000000000000;\n")
     f.close()
     
     file = open(path, "r")
-    command_number = 0
+    command_number = 1
     for line_number, line in enumerate(file):
         without_comments = trim_comments(line)
 

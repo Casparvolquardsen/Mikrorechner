@@ -1,4 +1,3 @@
-nop
 movi 0 0
 movi 1 1
 movi 3 800

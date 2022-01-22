@@ -19,7 +19,7 @@ begin
     variable temp : std_logic_vector(32 downto 0);
     constant setBit : std_logic_vector(31 downto 0) := "00000000000000000000000000000001";
     constant zero31 : std_logic_vector(30 downto 0) := "0000000000000000000000000000000";
-
+    cout <= '0';
     begin
         cout <= cin;
         result <= (others => 'U');
