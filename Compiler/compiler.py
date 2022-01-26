@@ -226,7 +226,11 @@ if __name__ == "__main__":
             if len(command_list) > 2:
                 raise ValueError(f"Wrong amount of operands in line number {line_number + 1}")
 
-            immediate = get_binary(command_list[1], 26, line_number)
+            if len(command_list) == 1: # no immediate specified
+                immediate = get_binary(0, 26, line_number)
+            else:
+                immediate = get_binary(command_list[1], 26, line_number)
+
             command_string = f"{opcodes[opcode]}{immediate}"
         elif opcode in no_registers:
             if len(command_list) > 1:
