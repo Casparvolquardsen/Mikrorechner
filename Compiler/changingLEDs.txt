@@ -1,0 +1,185 @@
+# input: dip 0, dip 1
+# output: 8 LEDs of the FPGA Board
+#
+# dip 0 to change the direction of the LED (from left to right and from right to left)
+# dip 1 stop the LED/ pause
+# dip 2 ON:  When LED reaches left or right end start start at the opposite side, same running direction
+#       OFF: When LED reaches left or right end, change direction
+#
+# program in pseudocode:
+#
+# LEDregister = 1 (Starts)
+# CurrentDirection = 0 (from right to left)
+# DipDirection = dip 0
+#
+# while true:
+#    wait XXX clocks # otherwise LEDs would switch faster than visible
+#
+#    if DipDirection != dip 0: # if dip 0 has been flipped
+#        CurrentDirection =  1 - CurrentDirection # invert Direction
+#
+#    if CurrentDirection == 0: # from right to left
+#        if LEDregister == 128: # reched left end
+#            LEDregister = 1
+#        else:
+#            LEDregister = LEDregister * 2 # move LED left
+#
+#
+#    if CurrentDirection == 1: # from left to right
+#        if LEDregister == 1: # reached right end
+#            LEDregister = 128
+#        else:
+#            LEDregister = LEDregister / 2 # move LED right
+#
+#
+#    while dip 1 == 0: # pause with dip 1
+#        nothing
+
+
+# LEDregister : register 13
+# dips : register 14
+# DipDirection = register 0
+# CurrentDirection = register 1
+
+# 0 nop
+
+movi 13 1   # LEDregister = 1
+
+movi 1 0    # CurrentDirection = 0 (from right to left)
+
+mov 14 0    # write dip 0 to DipDirection
+nop         
+nop         
+andi 0 1    # 6 bitmask to extract lowest order bit only, dip 0 bit
+
+
+# begin while(true) loop
+jsr         # save PC in register 15
+nop
+nop
+nop
+mov 15 12   # save PC in register 12
+
+# wait XXX clocks: if register 3 >= someValue jump below while loop, else repeat
+movi 3 0    # start write 0 to register 3
+movi 4 10   # finish TODO
+nop          
+jsr         
+addi 3 1    # increase register 3 by one
+nop         
+nop         
+cmpgt 3 4   # compare current register 3 with goal register 4
+bt 3        # if true: skip jump back
+nop         
+nop 
+nop        
+jmp 15      # jump back to loop begin
+nop         
+nop         
+nop
+
+
+# if DipDirection != dip 0: # if dip 0 has been flipped
+#     CurrentDirection =  1 - CurrentDirection # invert Direction
+mov 14 5    # write dip 0 to temp register 5
+nop         
+nop         
+andi 5 1    # bitmask to extract lowest order bit only, dip 0 bit
+nop
+nop
+cmpe 0 5    # compare DipDirection and register 5
+bf 8        # if unequal, change CurrentDirection, else jump below TODO
+nop
+nop
+nop
+movi 5 1    # write 1 in temp register 5
+nop         
+nop         
+subu 1 5 1  # subract 1 (register 5) form CurrentDirection (register 1)
+nop
+nop
+
+
+# branch false here
+movi 6 1    # write 1 in temp register 6    
+nop
+nop
+cmpe 1 6    # if CurrentDirection == 1
+bt 21       # TODO check if correct immediate value 
+nop
+nop
+nop
+
+#    if CurrentDirection == 0: # from right to left
+#        if LEDregister == 128: # reched left end
+#            LEDregister = 1
+#        else:
+#            LEDregister = LEDregister * 2 # move LED left
+movi 6 128    # write 128 in temp register 6    
+nop
+nop
+cmpe 13 6    # if LEDregister == 128
+bf 8         # if not jump to moving LED left
+nop
+nop
+nop
+movi 13 1
+br 22       # reseted LED jump out of if condition 
+nop
+nop
+nop
+# else LEDregister = LEDregister * 2 # move LED left
+lsl1 13 13
+br 17       # moved LED left, jump out of if condition
+nop
+nop
+nop
+
+#    if CurrentDirection == 1: # from left to right
+#        if LEDregister == 1: # reached right end
+#            LEDregister = 128
+#        else:
+#            LEDregister = LEDregister / 2 # move LED right
+movi 6 1    # write 1 in temp register 6    
+nop
+nop
+cmpe 13 6   # if LEDregister == 1
+bf 8        # if not, jump to moving LED right 
+nop
+nop
+nop
+movi 13 128  # LEDregister = 128
+br 4       # reseted LED, jump out of if condition 
+nop
+nop
+nop
+# else LEDregister = LEDregister / 2 # move LED right
+lsr1 13 13  # LEDregister = LEDregister >>> 1 # moved LED right, end of if condition
+
+
+# out of if condition
+#    while dip 1 == 0: # pause with dip 1
+#        nothing
+jsr 
+mov 14 5    # write dip 1 to temp register 5
+movi 6 2    # write 2 to temp register 6 to compare with dip 1 ( bit 1 in register 5)
+nop 
+nop        
+andi 5 2    # bitmask to extract 2. lowest order bit only, dip 1 bit
+nop
+nop
+cmpe 6 5    # compare DipDirection and register 5
+bf 3        # if unequal, change CurrentDirection, else jump below TODO
+nop
+nop
+nop
+jmp 15      # jump back to loop begin : jsr 
+nop
+nop
+nop
+
+# done with while true, jump back to begin in line 57
+jmp 12
+nop
+nop
+nop
