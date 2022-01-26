@@ -37,7 +37,7 @@ architecture verhalten of RegBank is
                     if y /= "UUUU" then
                         B <= registers(to_integer(unsigned(y)));
                     end if;
-                    if z /= "UUUU" then
+                    if z /= "UUUU" and C /= "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" then
                         registers(to_integer(unsigned(z))) <= C;
                     end if;
                     registers(14) <= (others => '0');
