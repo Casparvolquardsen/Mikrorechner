@@ -40,7 +40,7 @@ architecture verhalten of RegBank is
                     if z /= "UUUU" then
                         registers(to_integer(unsigned(z))) <= C;
                     end if;
-
+                    registers(14) <= (others => '0');
                     registers(14)(3 downto 0) <= dips;
                 end if;
                 if falling_edge(reset) then
