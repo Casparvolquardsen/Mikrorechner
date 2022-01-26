@@ -32,7 +32,7 @@ begin
                 -- jsr : R[15] = PC+1; PC = PC+1+{imm26} (call)
                 when "111001" =>    
                     temp   := std_logic_vector(unsigned(PCIn) - (2* oneAdress) + unsigned(immediate));
-                    PCSave  <= std_logic_vector(unsigned(PCIn) + oneAdress);
+                    PCSave  <= std_logic_vector(unsigned(PCIn) - (2* oneAdress));
 
                 -- bt : (c=1) ? PC = PC+1+{imm26} : PC=PC+1
                 when "111010" => 

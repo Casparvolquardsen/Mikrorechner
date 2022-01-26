@@ -6,7 +6,7 @@ entity ALU is
     port(   opcode : in  std_logic_vector(5 downto 0);
             A,B : in std_logic_vector(31 downto 0);
             immediate : in std_logic_vector(25 downto 0);
-            cin : in std_logic;
+            cin : in std_logic := '0';
 
             cout : out std_logic;
             result : out std_logic_vector(31 downto 0) );
@@ -16,10 +16,9 @@ end entity ALU;
 architecture verhalten of ALU is
 begin
     P1 : process (opcode, A, B, immediate, cin) is
-    variable temp : std_logic_vector(32 downto 0);
-    constant setBit : std_logic_vector(31 downto 0) := "00000000000000000000000000000001";
-    constant zero31 : std_logic_vector(30 downto 0) := "0000000000000000000000000000000";
-    cout <= '0';
+        variable temp : std_logic_vector(32 downto 0);
+        constant setBit : std_logic_vector(31 downto 0) := "00000000000000000000000000000001";
+        constant zero31 : std_logic_vector(30 downto 0) := "0000000000000000000000000000000";
     begin
         cout <= cin;
         result <= (others => 'U');
@@ -219,7 +218,7 @@ begin
             
             -- bclri : R[z] = R[z]  & !(1 << c) (clear bit)
             when "101000" =>    
-                result <= A AND std_logic_Vector(shift_left(unsigned(setBit), to_integer(unsigned(immediate))));
+                result <= A AND not std_logic_Vector(shift_left(unsigned(setBit), to_integer(unsigned(immediate))));
 
             -- default
             when others => null;
