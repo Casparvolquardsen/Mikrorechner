@@ -19,9 +19,9 @@ begin
     begin
         opcode <= instruction(31 downto 26);
         immediate <= (others => '0');
-        registerX <= (others => 'U');
-        registerY <= (others => 'U');
-        registerZ <= (others => 'U');
+        registerX <= (others => 'U');  -- TODO: remove undefined
+        registerY <= (others => 'U');  -- TODO: remove undefined
+        registerZ <= (others => 'U');  -- TODO: remove undefined
         
         if instruction(31) = '0' then
                 registerX <= instruction(25 downto 22);

@@ -22,8 +22,8 @@ begin
     variable haltet : std_logic := '1';
     begin
         If rising_edge(clk) and haltet = '0' then
-            PCOut <= (others => 'U');
-            PCSave <= (others => 'U');
+            PCOut <= (others => 'U');  -- TODO: remove undefined
+            PCSave <= (others => 'U');  -- TODO: remove undefined
             case opcode is
                 -- br : PC = PC +1+{imm26}
                 when "111000" =>    
@@ -62,7 +62,7 @@ begin
                     temp := std_logic_vector(unsigned(PCIn) + oneAdress);
             end case;
 
-            if PCIn = "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" then
+            if PCIn = "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" then  -- TODO: remove undefined
                 temp := "00000000000000000000000000000000";
             end if;
             PCOut <= temp;

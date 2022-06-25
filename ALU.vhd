@@ -21,7 +21,7 @@ begin
         constant zero31 : std_logic_vector(30 downto 0) := "0000000000000000000000000000000";
     begin
         cout <= cin;
-        result <= (others => 'U');
+        result <= (others => 'U');  -- TODO: remove undefined
         case opcode is
             -- mov : R[z] = R[x]
             when "000000" => 

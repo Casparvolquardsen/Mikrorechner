@@ -18,7 +18,7 @@ begin
                 resultReg <= result;
             end if;
             if falling_edge(reset) then
-                resultReg <= (others => 'U');
+                resultReg <= (others => 'U');  -- TODO: remove undefined
             end if;
     end process;
 end architecture;

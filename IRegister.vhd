@@ -23,7 +23,7 @@ begin
                 end if;
             end if;
             if falling_edge(reset) then
-                InstructionOut <= (others => 'U');
+                InstructionOut <= (others => 'U');  -- TODO: remove undefined
                 i := 1;
             end if;
     end process;

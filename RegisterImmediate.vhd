@@ -18,7 +18,7 @@ begin
                 Immout <= Immin;
             end if;
             if falling_edge(reset) then
-                Immout <= (others => 'U');
+                Immout <= (others => 'U');  -- TODO: remove undefined
             end if;
     end process;
 end architecture;
