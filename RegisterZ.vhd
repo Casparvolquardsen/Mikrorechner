@@ -18,7 +18,7 @@ begin
                 Zout <= Zin;
             end if;
             if falling_edge(reset) then
-                ZOut <= (others => 'U');  -- TODO: remove undefined
+                ZOut <= (others => '0'); 
             end if;
     end process;
 end architecture;

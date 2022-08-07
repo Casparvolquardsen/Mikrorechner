@@ -23,7 +23,7 @@ begin
                 end if;
             end if;
             if falling_edge(reset) then
-                InstructionOut <= (others => 'U');  -- TODO: remove undefined
+                InstructionOut <= "11111100000000000000000000000000";  -- Resets to nop
                 i := 1;
             end if;
     end process;

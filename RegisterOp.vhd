@@ -18,7 +18,7 @@ begin
                 OPout <= OPin;
             end if;
             if falling_edge(reset) then
-                OPOut <= (others => 'U');  -- TODO: remove undefined
+                OPOut <= "11111100000000000000000000000000";  -- Resets to nop
             end if;
     end process;
 end architecture;

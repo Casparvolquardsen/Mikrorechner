@@ -20,8 +20,8 @@ begin
         constant setBit : std_logic_vector(31 downto 0) := "00000000000000000000000000000001";
         constant zero31 : std_logic_vector(30 downto 0) := "0000000000000000000000000000000";
     begin
-        cout <= cin;
-        result <= (others => 'U');  -- TODO: remove undefined
+        cout <= '0';
+        result <= (others => '0');
         case opcode is
             -- mov : R[z] = R[x]
             when "000000" => 
