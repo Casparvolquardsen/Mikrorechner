@@ -123,8 +123,17 @@ architecture verhalten of Processor is
             wren_b : out std_logic );
     end component wren;
 
+    component CarryBitRegister is 
+        port(
+            clk : in  std_logic;
+            CarryIn : in std_logic;
+            reset       : in std_logic;
+            CarryOut : out std_logic
+        );
+    end component CarryBitRegister;
+
     begin
-        PC_component: PC port map(clock_50,opcodeReg,PCOut,ARegBank,immediateReg,carryAlu,key,PCOut,PCSave,PCShort);
+        PC_component: PC port map(clock_50,opcodeReg,PCOut,ARegBank,immediateReg,carryReg,key,PCOut,PCSave,PCShort);
         InstructionReg_component: IRegister port map(clock_50, instructionRAM, key(0), instructionIReg);
         Decoder_component: decoder port map(instructionIReg,opcodeDecoder,registerXDecoder,registerYDecoder,registerZDecoder,Zwren,immediateDecoder);
         ZReg1_component: RegisterZ port map(clock_50, registerZDecoder, key(0), registerZReg);
@@ -132,7 +141,8 @@ architecture verhalten of Processor is
         Regbank_component: regbank port map(clock_50,RegisterXDecoder,RegisterYDecoder,registerZ2Reg,Zwren,CMux,key(0), dip, led, ARegBank,BRegBank, AShortRegBank);
         ImmReg_component: RegisterImmediate port map(clock_50, immediateDecoder, key(0), immediateReg);
         OpReg_component: RegisterOp port map(clock_50, opcodeDecoder, key(0), opcodeReg);
-        ALU_component: ALU port map(opcodeReg, ARegBank, BRegBank, immediateReg, carryAlu, carryAlu, result);
+        ALU_component: ALU port map(opcodeReg, ARegBank, BRegBank, immediateReg, carryReg, carryAlu, result);
+        CarryBitRegister_component: CarryBitRegister port map(clock_50, carryAlu, key(0), carryReg);
         ResultReg_component: ResultRegister port map(clock_50, result, key(0), resultReg);
         WREN_component: wren port map(opcodeReg, wren_a, wren_b);
         OpReg2_component: RegisterOp port map(clock_50, opcodeReg, key(0), opcode2Reg);
