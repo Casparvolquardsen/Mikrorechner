@@ -132,13 +132,25 @@ architecture verhalten of Processor is
         );
     end component CarryBitRegister;
 
+    component WriteEnableZRegister is
+        port(   
+            clk : in std_logic;
+            WriteEnableZIn : in std_logic;
+            reset : in std_logic;
+    
+            WriteEnableZOut : out std_logic 
+        );
+    end component WriteEnableZRegister;
+
     begin
         PC_component: PC port map(clock_50,opcodeReg,PCOut,ARegBank,immediateReg,carryReg,key,PCOut,PCSave,PCShort);
         InstructionReg_component: IRegister port map(clock_50, instructionRAM, key(0), instructionIReg);
-        Decoder_component: decoder port map(instructionIReg,opcodeDecoder,registerXDecoder,registerYDecoder,registerZDecoder,Zwren,immediateDecoder);
+        Decoder_component: decoder port map(instructionIReg,opcodeDecoder,registerXDecoder,registerYDecoder,registerZDecoder,ZwrenDecoder,immediateDecoder);
         ZReg1_component: RegisterZ port map(clock_50, registerZDecoder, key(0), registerZReg);
         ZReg2_component: RegisterZ port map(clock_50, registerZReg, key(0), registerZ2Reg);
-        Regbank_component: regbank port map(clock_50,RegisterXDecoder,RegisterYDecoder,registerZ2Reg,Zwren,CMux,key(0), dip, led, ARegBank,BRegBank, AShortRegBank);
+        WrenZReg1_component: WriteEnableZRegister port map(clock_50, ZwrenDecoder, key(0), WrenZReg1);
+        WrenZReg1_component: WriteEnableZRegister port map(clock_50, WrenZReg1, key(0), WrenZReg2);
+        Regbank_component: regbank port map(clock_50,RegisterXDecoder,RegisterYDecoder,registerZ2Reg,WrenZReg2,CMux,key(0), dip, led, ARegBank,BRegBank, AShortRegBank);
         ImmReg_component: RegisterImmediate port map(clock_50, immediateDecoder, key(0), immediateReg);
         OpReg_component: RegisterOp port map(clock_50, opcodeDecoder, key(0), opcodeReg);
         ALU_component: ALU port map(opcodeReg, ARegBank, BRegBank, immediateReg, carryReg, carryAlu, result);
