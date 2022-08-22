@@ -5,7 +5,8 @@ use ieee.numeric_std.all;
 entity PC is
     port(   clk         : in std_logic;
             opcode      : in std_logic_vector(5 downto 0);
-            PCIn, X     : in std_logic_vector(31 downto 0);
+            PCIn        : in std_logic_vector(31 downto 0);
+            A           : in std_logic_vector(31 downto 0);
             immediate   : in std_logic_vector(25 downto 0);
             cin         : in std_logic;
             key         : in std_logic_vector(1 downto 0);
@@ -20,6 +21,7 @@ begin
     variable oneAdress : integer := 1;
     variable temp : std_logic_vector(31 downto 0);
     variable haltet : std_logic := '1';
+
     begin
         temp := "00000000000000000000000000000000";
 
@@ -53,7 +55,7 @@ begin
 
                 --jmp : PC = R[x]
                 when "111100" =>    
-                    temp := X;
+                    temp := A;
 
                 when "111110" =>
                     haltet := '1';

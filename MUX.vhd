@@ -14,14 +14,14 @@ end entity MUX;
 architecture verhalten of MUX is
 
 begin
-    P1: process (opcode, result, word) is 
+    P1: process (opcode, result, load_data, PCSave) is 
     begin
         -- ldw
         if opcode = "110000" then
             C <= load_data;
         -- jsr
-        elsif "111001" then
-            C <= PCSave
+        elsif opcode = "111001" then
+            C <= PCSave;
         else
             C <= result;
         end if;

@@ -35,14 +35,20 @@ architecture simulation of testbench is
     process is 
     begin 
         key <= "11";
-        dip <= "0000";
-        wait for 50 ns;
-        dip <= "1010";
+        dip <= "0010";
         wait for 1 ns;
+        key <= "10";
+        wait for 1 ns;
+        key <= "11";
+        wait for 30 ns;
         key <= "01";
         wait for 1 ns;
         key <= "11";
-        wait for 200 ns;
+        wait for 10000 ns;
+        dip <= "0011";
+        wait for 50000 ns;
+        dip <= "0010";
+        wait for 1000 ms;
         key <= "10";
         wait for 1 ns;
         key <= "11";

@@ -20,7 +20,7 @@ architecture verhalten of Processor is
     signal instructionIReg,PCOut,ARegBank, PCSave, BRegBank, CMux, result, resultReg : std_logic_vector(31 downto 0);
     signal opcodeDecoder, opcodeReg, opcode2Reg: std_logic_vector(5 downto 0);
     signal immediateDecoder, immediateReg : std_logic_vector(25 downto 0);
-    signal carryAlu: std_logic;
+    signal carryAlu, carryReg, ZwrenDecoder, WrenZReg1, WrenZReg2: std_logic;
     signal registerXDecoder,registerYDecoder,registerZDecoder,registerZReg, registerZ2Reg : std_logic_vector(3 downto 0);
 
 
@@ -28,7 +28,7 @@ architecture verhalten of Processor is
         port(
             clk         : in std_logic;
             opcode      : in std_logic_vector(5 downto 0);
-            PCIn, X     : in std_logic_vector(31 downto 0);
+            PCIn, A     : in std_logic_vector(31 downto 0);
             immediate   : in std_logic_vector(25 downto 0);
             cin         : in std_logic;
             key         : in std_logic_vector(1 downto 0);
@@ -78,7 +78,7 @@ architecture verhalten of Processor is
             reset : in std_logic;
             dips : in std_logic_vector(3 downto 0);
             led : out std_logic_vector(7 downto 0);
-            X,Y : out std_logic_vector(31 downto 0);
+            A,B : out std_logic_vector(31 downto 0);
             AShort : out std_logic_vector(15 downto 0));
     end component regbank;
 
@@ -149,7 +149,7 @@ architecture verhalten of Processor is
         ZReg1_component: RegisterZ port map(clock_50, registerZDecoder, key(0), registerZReg);
         ZReg2_component: RegisterZ port map(clock_50, registerZReg, key(0), registerZ2Reg);
         WrenZReg1_component: WriteEnableZRegister port map(clock_50, ZwrenDecoder, key(0), WrenZReg1);
-        WrenZReg1_component: WriteEnableZRegister port map(clock_50, WrenZReg1, key(0), WrenZReg2);
+        WrenZReg2_component: WriteEnableZRegister port map(clock_50, WrenZReg1, key(0), WrenZReg2);
         Regbank_component: regbank port map(clock_50,RegisterXDecoder,RegisterYDecoder,registerZ2Reg,WrenZReg2,CMux,key(0), dip, led, ARegBank,BRegBank, AShortRegBank);
         ImmReg_component: RegisterImmediate port map(clock_50, immediateDecoder, key(0), immediateReg);
         OpReg_component: RegisterOp port map(clock_50, opcodeDecoder, key(0), opcodeReg);

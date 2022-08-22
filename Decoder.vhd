@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use  ieee.numeric_std.all;
 
 entity decoder is
-    port(   instruction : in  std_logic_vector(31 downto 0) := "11111100000000000000000000000000";
+    port(   instruction : in  std_logic_vector(31 downto 0); -- ?? := "11111100000000000000000000000000"
 
             opcode      : out std_logic_vector(5 downto 0);
             registerX   : out std_logic_vector(3 downto 0);
@@ -26,7 +26,7 @@ begin
         registerZ <= (others => '0');
         Zwren <= '0'; -- write enable register Z is default false
 
-        case opcode is
+        case instruction(31 downto 26) is
             -- ALU-Commands --
             -- mov : R[z] = R[x]
             when "000000" => 
@@ -286,38 +286,38 @@ begin
                 Zwren <= '1';
 
             -- stw : MEM(R[x]) = R[y]
-            when "110000" =>
+            when "110001" =>
                 registerX <= instruction(25 downto 22);
                 -- the Register to store
                 registerY <= instruction(21 downto 18);
             
             -- Control-Commands
             -- br : PC = PC +1+{imm26}
-            when "110000" =>
+            when "111000" =>
                 immediate <= instruction(25 downto 0);
             
             -- jsr : R[15] = PC+1; PC = PC+1+{imm26} (call)
-            when "110000" =>
-                registerZ = '1111' -- register 15 is for jsr
+            when "111001" =>
+                registerZ <= "1111"; -- register 15 is for jsr
                 Zwren <= '1';
                 immediate <= instruction(25 downto 0);
             
             -- bt : (c=1) ? PC = PC+1+{imm26} : PC=PC+1
-            when "110000" =>
+            when "111010" =>
                 immediate <= instruction(25 downto 0);
             
             -- bf : (c=0) ? PC = PC+1+{imm26} : PC=PC+1
-            when "110000" =>
+            when "111011" =>
                 immediate <= instruction(25 downto 0);
             
             -- jmp : PC = R[x]
-            when "110000" =>
+            when "111100" =>
                 registerX <= instruction(25 downto 22);
             
             -- halt : halt
-            when "110000" => null;
+            when "111110" => null;
             -- nop : 
-            when "110000" => null;
+            when "111111" => null;
             -- default
             when others => null;
 

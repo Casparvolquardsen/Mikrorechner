@@ -73,7 +73,7 @@ BEGIN
 		clock_enable_output_a => "BYPASS",
 		clock_enable_output_b => "BYPASS",
 		indata_reg_b => "CLOCK0",
-		init_file => "C:\Users\johan\Downloads\Microrechner\Programm.mif",
+		init_file => "C:\Users\johan\OneDrive\Desktop\Microrechner-main\Microrechner-main\Programm.mif",
 		intended_device_family => "Cyclone IV E",
 		lpm_type => "altsyncram",
 		numwords_a => 65536,

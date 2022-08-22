@@ -19,7 +19,7 @@ begin
             end if;
             
             if falling_edge(reset) then
-                CarryOut <= (others => '0'); 
+                CarryOut <= '0'; 
             end if;
     end process;
 end architecture;

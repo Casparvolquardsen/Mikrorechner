@@ -59,6 +59,9 @@ nop
 nop
 nop
 mov 15 12   # save PC in register 12
+nop
+nop
+addi 12 7
 
 # wait XXX clocks: if register 3 >= someValue jump below while loop, else repeat
 movi 3 0    # start write 0 to register 3
@@ -69,7 +72,7 @@ addi 3 1    # increase register 3 by one
 nop         
 nop         
 cmpgt 3 4   # compare current register 3 with goal register 4
-bt 3        # if true: skip jump back
+bt 4        # if true: skip jump back
 nop         
 nop 
 nop        
@@ -88,14 +91,17 @@ andi 5 1    # bitmask to extract lowest order bit only, dip 0 bit
 nop
 nop
 cmpe 0 5    # compare DipDirection and register 5
-bf 8        # if unequal, change CurrentDirection, else jump below TODO
+bt 9        # if unequal, change CurrentDirection, else jump below TODO
 nop
 nop
 nop
 movi 5 1    # write 1 in temp register 5
 nop         
 nop         
-subu 1 5 1  # subract 1 (register 5) form CurrentDirection (register 1)
+subu 5 1 1  # subract 1 (register 5) from CurrentDirection (register 1)
+nop
+nop
+mov 1 0
 nop
 nop
 
@@ -111,7 +117,7 @@ nop
 nop
 
 #    if CurrentDirection == 0: # from right to left
-#        if LEDregister == 128: # reched left end
+#        if LEDregister == 128: # reached left end
 #            LEDregister = 1
 #        else:
 #            LEDregister = LEDregister * 2 # move LED left
@@ -169,7 +175,7 @@ andi 5 2    # bitmask to extract 2. lowest order bit only, dip 1 bit
 nop
 nop
 cmpe 6 5    # compare DipDirection and register 5
-bf 3        # if unequal, change CurrentDirection, else jump below TODO
+bt 4        #if dip1 = 1 then stop wait
 nop
 nop
 nop

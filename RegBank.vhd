@@ -12,8 +12,8 @@ entity RegBank is
             
 
             led : out std_logic_vector(7 downto 0);
-            X,Y : out std_logic_vector(31 downto 0);
-            XShort : out std_logic_vector(15 downto 0));
+            A,B : out std_logic_vector(31 downto 0);
+            AShort : out std_logic_vector(15 downto 0));
              
 end entity RegBank;
 
@@ -27,10 +27,10 @@ architecture verhalten of RegBank is
         P1 : process(clk, reset) is
             begin
                 If rising_edge(clk) then
-                    X <= registers(to_integer(unsigned(x)));
-                    XShort <= registers(to_integer(unsigned(x)))(15 downto 0);
+                    A <= registers(to_integer(unsigned(x)));
+                    AShort <= registers(to_integer(unsigned(x)))(15 downto 0);
                     
-                    Y <= registers(to_integer(unsigned(y)));
+                    B <= registers(to_integer(unsigned(y)));
 
                     if Zwren = '1' then
                         registers(to_integer(unsigned(z))) <= C;
@@ -42,9 +42,9 @@ architecture verhalten of RegBank is
                 end if;
 
                 if falling_edge(reset) then
-                    X <= (others => '0');
-                    XShort <= (others => '0');
-                    Y <= (others => '0');
+                    A <= (others => '0');
+                    AShort <= (others => '0');
+                    B <= (others => '0');
                     for I in 0 to 15 loop
                         registers(I) <= (others => '0');
                     end loop;

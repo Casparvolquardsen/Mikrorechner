@@ -19,7 +19,7 @@ begin
             end if;
             
             if falling_edge(reset) then
-                WriteEnableZOut <= (others => '0'); 
+                WriteEnableZOut <= '0'; 
             end if;
     end process;
 end architecture;
