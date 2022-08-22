@@ -1,5 +1,5 @@
 # Microrechner
-Implementierung eines RISC Prozessors mit VHDL im Rahmen des Projekt-Moduls
+Implementierung eines RISC Prozessors mit VHDL im Rahmen des Projekt-Moduls. Der Mikrorechner ist für das DE0-Nano Board mit Altera Cyclone IV FPGA Chip entworfen.
 
 # Befehlssatz (Instruction-Set-Architecture)
 
