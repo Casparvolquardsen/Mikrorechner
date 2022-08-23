@@ -1,0 +1,45 @@
+mov 4 6
+addu 4 3 1	
+addc 2 3 5
+subu 2 6 7
+and 4 5 8
+or 5 6 5
+xor	3 2 1
+not 6 6
+nand 7 9 5
+nor 7 5 3
+nxor 12 1 7
+max 1 0 4
+min 6 4 4
+lsl16 8 4
+lsr16 6 0
+asr16 9 9
+lsl4 4 4 
+lsr4 11 3
+asr4 10 6
+lsl1 12 3
+lsr1 2 8
+asr1 4 9
+cmpe 2 5
+cmpne 3 7
+cmpgt 14 7
+cmplt 15 7
+cmpgte 4 13
+cmplte 0 0
+movi 1 4657
+addi 6 0
+subi 2 2355
+andi 1 4194303
+lsli 4 654626
+lsri 5 65
+bseti 4 51
+bclri 5 64
+ldw 2 3 6546
+stw 5 9 74
+br 67108863
+jsr 651
+bt 0 
+bf 516544
+jmp 15
+halt 
+nop
