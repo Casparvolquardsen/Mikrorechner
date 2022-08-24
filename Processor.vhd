@@ -11,7 +11,7 @@ entity Processor is
         
         led                         : out std_logic_vector(7 downto 0);
         data_write                  : out std_logic_vector(31 downto 0);
-        AShortRegBank, PCShort      : out std_logic_vector(15 downto 0);
+        AShortRegBank, PCShort      : out std_logic_vector(10 downto 0);
         wren_a, wren_b              : out std_logic
     );
 end Processor;
@@ -34,7 +34,7 @@ architecture verhalten of Processor is
             key         : in std_logic_vector(1 downto 0);
     
             PCOut,PCSave : out std_logic_vector(31 downto 0);
-            PCShort : out std_logic_vector(15 downto 0));
+            PCShort : out std_logic_vector(10 downto 0));
     end component PC;
 
     component IRegister is
@@ -79,7 +79,7 @@ architecture verhalten of Processor is
             dips : in std_logic_vector(3 downto 0);
             led : out std_logic_vector(7 downto 0);
             A,B : out std_logic_vector(31 downto 0);
-            AShort : out std_logic_vector(15 downto 0));
+            AShort : out std_logic_vector(10 downto 0));
     end component regbank;
 
     component RegisterImmediate is

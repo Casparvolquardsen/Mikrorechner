@@ -14,11 +14,11 @@ architecture verhalten of RegisterImmediate is
 begin
     P1 : process(clk, reset) is
         begin
-            if rising_edge(clk) then
-                Immout <= Immin;
-            end if;
-            if falling_edge(reset) then
+            
+            if reset = '0' then
                 Immout <= (others => '0');
+            elsif rising_edge(clk) then
+                Immout <= Immin;
             end if;
     end process;
 end architecture;

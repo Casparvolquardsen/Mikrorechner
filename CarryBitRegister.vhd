@@ -14,12 +14,10 @@ architecture verhalten of CarryBitRegister is
 begin
     P1 : process(clk, reset) is
         begin
-            if rising_edge(clk) then
-                CarryOut <= CarryIn;
-            end if;
-            
-            if falling_edge(reset) then
+            if reset = '0' then
                 CarryOut <= '0'; 
+            elsif rising_edge(clk) then
+                CarryOut <= CarryIn;
             end if;
     end process;
 end architecture;

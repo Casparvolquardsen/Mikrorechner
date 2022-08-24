@@ -13,7 +13,7 @@ entity RegBank is
 
             led : out std_logic_vector(7 downto 0);
             A,B : out std_logic_vector(31 downto 0);
-            AShort : out std_logic_vector(15 downto 0));
+            AShort : out std_logic_vector(10 downto 0));
              
 end entity RegBank;
 
@@ -26,9 +26,16 @@ architecture verhalten of RegBank is
     begin
         P1 : process(clk, reset) is
             begin
-                If rising_edge(clk) then
+                if reset = '0' then
+                	A <= (others => '0');
+                    AShort <= (others => '0');
+                    B <= (others => '0');
+                    for I in 0 to 15 loop
+                        registers(I) <= (others => '0');
+                    end loop;
+                elsIf rising_edge(clk) then
                     A <= registers(to_integer(unsigned(x)));
-                    AShort <= registers(to_integer(unsigned(x)))(15 downto 0);
+                    AShort <= registers(to_integer(unsigned(x)))(10 downto 0);
                     
                     B <= registers(to_integer(unsigned(y)));
 
@@ -39,15 +46,6 @@ architecture verhalten of RegBank is
                     -- Input of FPGA-Board is saved in Register 14
                     registers(14) <= (others => '0');
                     registers(14)(3 downto 0) <= dips;
-                end if;
-
-                if falling_edge(reset) then
-                    A <= (others => '0');
-                    AShort <= (others => '0');
-                    B <= (others => '0');
-                    for I in 0 to 15 loop
-                        registers(I) <= (others => '0');
-                    end loop;
                 end if;
 
                 -- leds (Output of FPGA-Board)

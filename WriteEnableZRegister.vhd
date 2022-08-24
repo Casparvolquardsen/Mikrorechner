@@ -14,12 +14,11 @@ architecture verhalten of WriteEnableZRegister is
 begin
     P1 : process(clk, reset) is
         begin
-            if rising_edge(clk) then
-                WriteEnableZOut <= WriteEnableZIn;
-            end if;
             
-            if falling_edge(reset) then
-                WriteEnableZOut <= '0'; 
+            if reset = '0' then
+                WriteEnableZOut <= '0';
+            elsif rising_edge(clk) then
+                WriteEnableZOut <= WriteEnableZIn;
             end if;
     end process;
 end architecture;

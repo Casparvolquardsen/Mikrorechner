@@ -14,11 +14,10 @@ architecture verhalten of RegisterZ is
 begin
     P1 : process(clk, reset) is
         begin
-            if rising_edge(clk) then
+            if reset = '0' then
+                Zout <= (others => '0'); 
+            elsif rising_edge(clk) then
                 Zout <= Zin;
-            end if;
-            if falling_edge(reset) then
-                ZOut <= (others => '0'); 
             end if;
     end process;
 end architecture;

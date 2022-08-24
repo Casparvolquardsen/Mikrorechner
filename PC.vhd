@@ -12,7 +12,7 @@ entity PC is
             key         : in std_logic_vector(1 downto 0);
 
             PCOut,PCSave : out std_logic_vector(31 downto 0);
-            PCShort : out std_logic_vector(15 downto 0));
+            PCShort : out std_logic_vector(10 downto 0));
 end entity PC;
 
 architecture verhalten of PC is
@@ -25,7 +25,14 @@ begin
     begin
         temp := "00000000000000000000000000000000";
 
-        If rising_edge(clk) and haltet = '0' then
+	if key(0) = '0' then
+	    PCOut <= (others => '0');
+            PCShort <= (others => '0');
+            PCSave <= (others => '0');
+            haltet := '1';
+        elsif key(1) = '0' then -- start
+            haltet := '0';
+        elsIf rising_edge(clk) and haltet = '0' then
             PCSave <= (others => '0');
             case opcode is
                 -- br : PC = PC +1+{imm26}
@@ -66,18 +73,7 @@ begin
             end case;
 
             PCOut <= temp;
-            PCShort <= temp(15 downto 0);
-        end if;
-        
-        if falling_edge(key(0)) then -- reset all registers and halt
-            PCOut <= (others => '0');
-            PCShort <= (others => '0');
-            PCSave <= (others => '0');
-            haltet := '1';
-        end if;
-
-        if falling_edge(key(1)) then -- start
-            haltet := '0';
+            PCShort <= temp(10 downto 0);
         end if;
     end process;
 end architecture;

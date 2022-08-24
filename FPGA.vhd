@@ -13,7 +13,7 @@ entity FPGA is
 end entity FPGA;
 
 architecture verhalten of FPGA is
-        signal AShortRegBank, PCShort               : std_logic_vector(15 downto 0);
+        signal AShortRegBank, PCShort               : std_logic_vector(10 downto 0);
         signal wren_a, wren_b                       : std_logic;
         signal instructionRAM, wordRAM, BRegBank    : std_logic_vector(31 downto 0);
 
@@ -27,7 +27,7 @@ architecture verhalten of FPGA is
                 
                 led                             : out std_logic_vector(7 downto 0);
                 data_write                      : out std_logic_vector(31 downto 0);  -- write
-                AShortRegBank, PCShort          : out std_logic_vector(15 downto 0);
+                AShortRegBank, PCShort          : out std_logic_vector(10 downto 0);
                 wren_a, wren_b                  : out std_logic
         );
     end component Processor;
@@ -35,8 +35,8 @@ architecture verhalten of FPGA is
 
     component RAM is
         port (
-                address_a	: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
-                address_b	: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
+                address_a	: IN STD_LOGIC_VECTOR (10 DOWNTO 0);
+                address_b	: IN STD_LOGIC_VECTOR (10 DOWNTO 0);
                 clock	        : IN STD_LOGIC;
                 data_a	        : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
                 data_b	        : IN STD_LOGIC_VECTOR (31 DOWNTO 0); -- don't care, read only for us

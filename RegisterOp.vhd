@@ -14,11 +14,10 @@ architecture verhalten of RegisterOP is
 begin
     P1 : process(clk, reset) is
         begin
-            if rising_edge(clk) then
-                OPout <= OPin;
-            end if;
-            if falling_edge(reset) then
+            if reset = '0' then
                 OPOut <= "111111";  -- Resets to nop
+            elsif rising_edge(clk) then
+                OPout <= OPin;
             end if;
     end process;
 end architecture;

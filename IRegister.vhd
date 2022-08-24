@@ -15,16 +15,15 @@ begin
     P1 : process(clk) is
         variable i : integer := 1;
         begin
-            if rising_edge(clk)then
+            if reset = '0' then
+                InstructionOut <= "11111100000000000000000000000000"; 
+                i := 1;
+            elsif rising_edge(clk) then
                 if i = 0 then
                     InstructionOut <= InstructionIn;
                 else
                     i := 0;
                 end if;
-            end if;
-            if falling_edge(reset) then
-                InstructionOut <= "11111100000000000000000000000000";  -- Resets to nop
-                i := 1;
             end if;
     end process;
 end architecture;
